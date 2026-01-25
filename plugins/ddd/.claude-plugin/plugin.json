@@ -1,0 +1,10 @@
+{
+  "name": "ddd",
+  "version": "0.1.0",
+  "description": "Domain-Driven Design plugin",
+  "author": {
+    "name": "Kalle Bjökrklid"
+  },
+  "keywords": ["domain-driven-design", "ddd", "domain-modeling", "tactical-ddd"],
+  "skills": "./skills"
+}

@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(plugin-dev:skill-development)",
+      "Skill(plugin-dev:plugin-structure)",
+      "Skill(mermaid-diagrams:mermaid)",
+      "Skill(mermaid-diagrams-guide:mermaid)",
+      "Skill(mermaid-usage-in-markdown:mermaid-in-markdown)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  },
+  "extraKnownMarketplaces": {
+    "ddd-marketplace": {
+      "source": {
+        "source": "directory",
+        "path": "./"
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "DDD Domain Design Marketplace",
+  "description": "Domain-Driven Design marketplace for specifying microservices and modules with DDD tactical patterns",
+  "version": "0.1.0",
+  "author": "DDD Specification",
+  "plugins": [
+    {
+      "name": "ddd-domain-design",
+      "description": "Create domain design documents using Domain-Driven Design practices. Produces domain.md with aggregates, value objects, ubiquitous language, and invariants.",
+      "version": "0.1.0",
+      "author": "DDD Specification",
+      "skills": ["ddd-domain-design"],
+      "keywords": ["domain-driven-design", "ddd", "microservices", "domain-modeling", "aggregates", "value-objects"]
+    }
+  ]
+}

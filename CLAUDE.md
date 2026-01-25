@@ -35,10 +35,10 @@ ddd-spec/
 │               │   ├── repositories.md
 │               │   ├── ports.md
 │               │   ├── factories.md
-│               │   └── specifications.md
+│               │   ├── specifications.md
+│               │   └── policies.md
 │               └── examples/      # Example domain designs
 │                   ├── order-domain-example.md
-│                   ├── ddd-patterns-guide.md
 │                   └── invariants-examples.md
 └── .claude/
     └── settings.local.json       # Local Claude settings
@@ -212,14 +212,26 @@ This plugin is registered in `.claude/settings.local.json` as a local marketplac
 }
 ```
 
+The plugin is auto-discovered by Claude Code from the local marketplace directory.
+
 ### Plugin Manifests
 
-- **Marketplace manifest:** `.claude-plugin/marketplace.json`
-- **Plugin manifest:** `plugins/ddd/.claude-plugin/plugin.json`
+- **Marketplace manifest:** `.claude-plugin/marketplace.json` - Defines the marketplace metadata and plugin list
+- **Plugin manifest:** `plugins/ddd/.claude-plugin/plugin.json` - Defines plugin metadata and skills directory
 
 ### Local Settings
 
-Permissions for skill development and Mermaid diagrams are configured in `.claude/settings.local.json`.
+Permissions for skill development and Mermaid diagrams are configured in `.claude/settings.local.json`. This file also configures the local marketplace registration.
+
+### Testing the Skill
+
+After making changes to skill files or guides:
+
+1. **Reload Claude Code** - The skill will be auto-discovered from the local marketplace
+2. **Test invocation** - Use trigger phrases like "create a domain.md" or "design a domain model"
+3. **Validate documentation** - Ensure changes in `guides/` are properly referenced in `SKILL.md`
+
+No build step is required - this is a documentation-only plugin with Markdown files.
 
 ## Comprehensive DDD Pattern Guides
 
@@ -244,6 +256,7 @@ The `guides/` directory contains extensive documentation for each tactical DDD p
 | Driven Ports | `ports.md` | External dependencies, hexagonal architecture, adapters |
 | Factories | `factories.md` | Complex creation, factory methods vs classes |
 | Specifications | `specifications.md` | Business queries, composability, reusable rules |
+| Policies | `policies.md` | Encapsulating algorithms, business rules, EventStorming automation |
 
 ### Progressive Disclosure Approach
 

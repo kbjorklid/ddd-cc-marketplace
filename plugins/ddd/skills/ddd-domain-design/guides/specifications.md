@@ -697,16 +697,16 @@ flowchart TB
 
 ## Summary Checklist
 
-When designing Specifications, ensure:
+When reviewing a DOMAIN.md for Specification compliance, ask:
 
-- [ ] Named using ubiquitous language (domain terminology)
-- [ ] Encapsulates meaningful business concept
-- [ ] Reusable across multiple use cases
-- [ ] Composable (can be combined with AND, OR, NOT)
-- [ ] Pure predicate (no side effects)
-- [ ] Used for both queries and validation
-- [ ] Documented in DOMAIN.md when complex or reused
-- [ ] Business rule clearly defined
-- [ ] Not over-used (avoid trivial one-off conditions)
-- [ ] Distinguished from aggregate behavior methods
-- [ ] Distinguished from domain services (stateless operations)
+- [ ] Is the Specification named using ubiquitous language (domain terminology)?
+- [ ] Does the Specification encapsulate a meaningful business concept?
+- [ ] Is the Specification reusable across multiple use cases?
+- [ ] Is the Specification composable (can be combined with AND, OR, NOT)?
+- [ ] Is the Specification a pure predicate (no side effects)?
+- [ ] Is the Specification used for both queries and validation?
+- [ ] Is the Specification documented in DOMAIN.md when complex or reused?
+- [ ] Is the business rule of the Specification clearly defined?
+- [ ] Is the Specification not over-used (avoiding trivial one-off conditions)?
+- [ ] Is the Specification distinguished from aggregate behavior methods?
+- [ ] Is the Specification distinguished from domain services (stateless operations)?

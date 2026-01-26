@@ -2,45 +2,9 @@
 
 ## Overview
 
-In Hexagonal Architecture (also known as Ports and Adapters), **Driven Ports** are interfaces defined in the Domain layer that represent contracts the domain needs from external dependencies. The domain layer defines the port (interface), while the infrastructure layer provides the adapter (implementation).
+**Driven Ports** are interfaces defined in the Domain layer that represent contracts the domain needs from external dependencies. The domain layer defines the port (interface), while the infrastructure layer provides the adapter (implementation).
 
-**Core principles:**
-- **Port in Domain** - Interface defined in Domain layer
-- **Adapter in Infrastructure** - Implementation in Infrastructure layer
-- **Domain depends on abstraction** - Domain depends on port, not concrete implementation
-- **Adapters depend on domain** - Infrastructure implements domain interface
-
-```mermaid
-flowchart TB
-    subgraph Domain["Domain Layer (This Guide)"]
-        Port[IPaymentGateway Port Interface]
-        DomainService[PaymentProcessor Domain Service]
-    end
-
-    subgraph Infrastructure["Infrastructure Layer (Not Covered)"]
-        Adapter[StripePaymentAdapter Adapter]
-        PayPalAdapter[PayPalPaymentAdapter Adapter]
-    end
-
-    subgraph External["External World"]
-        Stripe[Stripe API]
-        PayPal[PayPal API]
-    end
-
-    DomainService -->|Uses| Port
-    Adapter -->|Implements| Port
-    PayPalAdapter -->|Implements| Port
-    Adapter -->|Calls| Stripe
-    PayPalAdapter -->|Calls| PayPal
-
-    style Domain fill:#e1f5e1
-    style Infrastructure fill:#fff4e1
-    style External fill:#ffe1e1
-```
-
-## Port vs Adapter Distinction
-
-### Ports (Domain Concern)
+## Ports (Domain Concern)
 
 **Ports are interfaces** defined in the Domain layer that represent:
 
@@ -55,22 +19,6 @@ flowchart TB
 - `IExchangeRateService` - getting currency exchange rates
 - `INotificationService` - sending notifications
 
-### Adapters (Infrastructure Concern)
-
-**Adapters are implementations** that:
-
-- Implement port interfaces
-- Handle integration with external services
-- Contain infrastructure-specific code
-
-**Examples of Adapters:**
-- `SendGridEmailAdapter` - implements `IEmailGateway` using SendGrid
-- `TwilioSmsAdapter` - implements `ISmsGateway` using Twilio
-- `StripePaymentAdapter` - implements `IPaymentGateway` using Stripe
-- `FixerExchangeRateAdapter` - implements `IExchangeRateService` using Fixer.io
-
-**Note:** This guide covers Ports (domain interfaces). Adapters (implementations) are infrastructure concerns and are not covered.
-
 ## When to Use Driven Ports
 
 Use driven ports when domain logic requires:
@@ -80,34 +28,57 @@ Use driven ports when domain logic requires:
 - **Infrastructure operations** - File system, logging (sometimes)
 - **Third-party integrations** - Shipping providers, geocoding services
 
-### Decision Flow
+## Core Design Principles
+
+### Principle 1: Dependency Inversion Principle (DIP)
+
+**Rule:** Source code dependencies must point inward, toward the high-level policy. The business logic defines the port (interface), and the infrastructure layer provides the adapter (implementation).
+
+**Key implications:**
+- **Interface ownership:** The interface belongs to the domain layer, not infrastructure
+- **Direction of dependency:** Infrastructure depends on domain, not vice versa
+- **Protection:** Domain is shielded from volatile technical details
+
+### Principle 2: Interface Segregation Principle (ISP)
+
+**Rule:** Avoid creating massive, monolithic interfaces. Interfaces should be specific to the client using them.
+
+**Benefits:**
+- **Client-specific:** If a use case only needs to charge payments, it depends only on `IPaymentGateway`, not a 20-method interface
+- **Reduced recompilation:** In statically typed languages, changes to unrelated methods don't force recompilation of clients
+- **Clearer intent:** Each interface has a single, focused purpose
+
+**Example:**
+- ❌ Monolithic: `INotificationService` with email, SMS, push, in-app, webhook methods
+- ✅ Segregated: `IEmailGateway`, `ISmsGateway`, `IPushNotificationGateway`
+
+### Principle 3: Define by Intent, Not Implementation
+
+**Rule:** Port interfaces should reflect business intent, not underlying technology.
 
 ```mermaid
-flowchart TD
-    A[Domain needs external service?] -->|Yes| B{Does service\ncontain\nbusiness logic?}
-    A -->|No| C[Don't create port]
+flowchart TB
+    subgraph Good["✅ Business Intent"]
+        G1[scheduleDelivery]
+        G2[findCustomerContactInfo]
+        G3[processRefund]
+    end
 
-    B -->|Yes| D[Create Driven Port]
-    B -->|No - pure infra| E[Handle in infrastructure]
+    subgraph Bad["❌ Implementation Details"]
+        B1[insertIntoDeliveryQueue]
+        B2[executeSqlQuery]
+        B3[httpPostToRefundUrl]
+    end
 
-    D --> F[Define interface in Domain layer]
-    F --> G[Use in Domain Service]
-    G --> H[Implement in Infrastructure layer]
-
-    style D fill:#e1f5e1
-    style F fill:#e1f5e1
-    style G fill:#e1f5e1
+    style Good fill:#e1f5e1
+    style Bad fill:#f5e1e1
 ```
 
-**Examples:**
-
-| External Service | Contains Business Logic? | Create Port? |
-|-----------------|------------------------|--------------|
-| Payment gateway | ✅ Yes (charge, refund) | ✅ Yes |
-| Email service | ❌ No (delivery mechanism) | ✅ Yes (if domain needs "send email") |
-| Database access | ❌ No (persistence detail) | ❌ No (use repository) |
-| Exchange rate API | ✅ Yes (currency conversion) | ✅ Yes |
-| Logging framework | ❌ No (infrastructure) | ❌ No |
+**Guidelines:**
+- Use Ubiquitous Language from the domain
+- Avoid technical jargon (SQL, HTTP, REST, queue)
+- Don't leak implementation exceptions (e.g., `SQLException`, `HttpException`)
+- Don't accept framework-specific types (e.g., `JdbcConnection`, `HttpClient`)
 
 ## Port Interface Rules
 
@@ -115,32 +86,30 @@ flowchart TD
 
 **Rule:** Port interfaces are defined in the Domain layer using domain terminology.
 
+**Good exmaple:**
 ```mermaid
 classDiagram
     class IPaymentGateway {
-        <<Domain Layer>> <<Port Interface>>
+        <<Port Interface>>
         +Charge(amount: Money, paymentMethod: PaymentMethod) Result~Payment~
         +Refund(payment: Payment, amount: Money) Result~Refund~
         +GetStatus(payment: Payment) Result~PaymentStatus~
     }
 
-    class StripePaymentAdapter {
-        <<Infrastructure Layer>> <<Adapter>>
-        -ApiKey: string
-        +Charge(amount: Money, paymentMethod: PaymentMethod) Result~Payment~
-        +Refund(payment: Payment, amount: Money) Result~Refund~
-        +GetStatus(payment: Payment) Result~PaymentStatus~
-    }
 
-    IPaymentGateway <|.. StripePaymentAdapter
 ```
 
-**Benefits:**
-
-- Domain controls the contract it needs
-- Infrastructure adapts to domain requirements
-- Easy to swap implementations
-- Testable with fake adapters
+**Bad example:**
+```mermaid
+classDiagram
+    class IStripePaymentGateway {
+        <<Port Interface>>>
+        -ApiKey: string
+        +Charge(amount: decimal, paymentMethod: StripePaymentMethod) Result~StripePayment~
+        +Refund(payment: StripePayment, amount: decimal) Result~Refund~
+        +GetStatus(payment: StripePayment) Result~StripePaymentStatus~
+    }
+```
 
 ### Rule 2: Use Domain Terminology
 
@@ -165,6 +134,8 @@ flowchart TB
 ```
 
 ### Rule 3: Return Result for Operations That Can Fail
+
+(when the Result pattern is used)
 
 **Rule:** Port operations return `Result<T>` for operations that can fail (network errors, validation, business rules).
 
@@ -230,6 +201,180 @@ classDiagram
     IPaymentGateway --> PaymentMethod : uses
     IPaymentGateway --> Payment : returns
 ```
+
+## Common Patterns for Driven Ports
+
+### Pattern 1: Gateway / Proxy Pattern
+
+**Purpose:** Communicate with external services (payment processors, legacy monoliths, third-party APIs) while encapsulating the underlying mechanism (REST, gRPC, SOAP, etc.).
+
+```mermaid
+flowchart TB
+    subgraph Domain["Domain Layer"]
+        Port[ILegacyCustomerService Port]
+        DomainService[CustomerMigrationService]
+    end
+
+    subgraph Infrastructure["Infrastructure Layer"]
+        Adapter[LegacySoapAdapter]
+    end
+
+    subgraph External["External System"]
+        Legacy[Legacy Monolith SOAP API]
+    end
+
+    DomainService -->|uses| Port
+    Adapter -->|implements| Port
+    Adapter -->|translates to SOAP| Legacy
+
+    style Port fill:#e1f5e1
+    style DomainService fill:#e1f5e1
+    style Adapter fill:#fff4e1
+```
+
+**Key characteristics:**
+- **Encapsulation:** The port interface hides the communication mechanism (REST vs gRPC vs SOAP)
+- **Protocol-agnostic:** Domain doesn't know if the external system uses REST, GraphQL, SOAP, or a message queue
+
+**Example:**
+```mermaid
+classDiagram
+    class ILegacyCustomerService {
+        <<Port Interface>>
+        +GetCustomer(customerId: CustomerId) Result~Customer~
+        +UpdateCustomer(customer: Customer) Result~void~
+    }
+
+    class LegacySoapAdapter {
+        <<Adapter>> <<Infrastructure>>
+        +GetCustomer(customerId: CustomerId) Result~Customer~
+        +UpdateCustomer(customer: Customer) Result~void~
+        -SoapClient: SoapClient
+        -MapSoapToCustomer() Customer
+        -MapCustomerToSoap() SoapRequest
+    }
+
+    ILegacyCustomerService <|.. LegacySoapAdapter
+```
+
+### Pattern 2: Output Port (Event Publisher)
+
+**Purpose:** Enable asynchronous communication or event-driven architectures by providing a write-only interface for publishing domain events.
+
+```mermaid
+flowchart TB
+    subgraph Domain["Domain Layer"]
+        Aggregate[Order Aggregate]
+        Port[IEventPublisher Port]
+    end
+
+    subgraph Infrastructure["Infrastructure Layer"]
+        Adapter[RabbitMQEventBusAdapter]
+    end
+
+    subgraph External["Message Bus"]
+        RabbitMQ[RabbitMQ]
+    end
+
+    Aggregate -->|publishes events to| Port
+    Adapter -->|implements| Port
+    Adapter -->|pushes messages to| RabbitMQ
+
+    style Port fill:#e1f5e1
+    style Aggregate fill:#e1f5e1
+    style Adapter fill:#fff4e1
+```
+
+**Key characteristics:**
+- **Write-only:** The application only writes events to the port, never reads from it
+- **Observer/Mediator pattern:** The domain defines an interface (observer) that infrastructure implements
+- **Decoupling:** Domain publishes events without knowing who consumes them or how they're delivered
+
+**Example:**
+```mermaid
+classDiagram
+    class IEventPublisher {
+        <<Output Port>> <<Write-Only>>
+        +Publish(event: DomainEvent) Result~void~
+        +PublishBatch(events: List~DomainEvent~) Result~void~
+    }
+
+    class DomainEvent {
+        <<Base Class>>
+        +OccurredAt: DateTime
+        +AggregateId: AggregateId
+    }
+
+    class OrderPlaced {
+        <<Domain Event>>
+        +OrderId: OrderId
+        +CustomerId: CustomerId
+        +TotalAmount: Money
+    }
+
+    class RabbitMQEventBusAdapter {
+        <<Adapter>> <<Infrastructure>>
+        +Publish(event: DomainEvent) Result~void~
+        +PublishBatch(events: List~DomainEvent~) Result~void~
+        -Connection: RabbitMQConnection
+        -SerializeToJson() string
+    }
+
+    IEventPublisher <|.. RabbitMQEventBusAdapter
+    OrderPlaced --|> DomainEvent
+```
+
+**Usage in Domain Service:**
+```mermaid
+flowchart TD
+    A[Domain Service executes logic] --> B[State change occurs]
+    B --> C[Domain Event created]
+    C --> D[EventPublisher.Publish called]
+    D --> E[Adapter queues message]
+    E --> F[Message bus delivers to consumers]
+
+    style A fill:#e1f5e1
+    style C fill:#e1f5e1
+    style D fill:#e1f5e1
+```
+
+## Data Exchange Guidance
+
+### Data Structures vs Domain Objects
+
+There is a tension between strict decoupling and pragmatism regarding what data crosses port boundaries.
+
+```mermaid
+flowchart TB
+    subgraph Strict["Strict Decoupling"]
+        S1[Pass simple DTOs/structs]
+        S2[No domain logic crosses boundary]
+        S3[Infrastructure independent of domain]
+    end
+
+    subgraph Pragmatic["Pragmatic DDD"]
+        P1[Pass Aggregates/Entities]
+        P2[Adapter handles mapping]
+        P3[Richer domain interface]
+    end
+
+    Strict -->|Use for| External[External systems with different models]
+    Pragmatic -->|Use for| Repositories[Persistence via repositories]
+
+    style Strict fill:#fff4e1
+    style Pragmatic fill:#e1f5e1
+```
+
+**Guidelines:**
+
+| Scenario | What to Pass | Rationale |
+|----------|--------------|-----------|
+| **Repository** | Aggregates/Entities | Pragmatic DDD: Adapter maps domain objects to database rows |
+| **External Service (matching model)** | Aggregates/Entities or DTOs | Either works; choose based on model similarity |
+| **External Service (different model)** | Simple DTOs | Strict decoupling prevents external model from leaking |
+| **Event Publishing** | Domain Events (Value Objects) | Events are domain concepts; serializable by infrastructure |
+
+**Rule of thumb:** Do not pass framework-specific objects (Hibernate proxies, active records, HTTP responses) into the domain.
 
 ## Domain Services Using Ports
 
@@ -498,18 +643,35 @@ flowchart TB
 
 ## Summary Checklist
 
-When designing driven ports in the domain layer:
+When reviewing a DOMAIN.md for Driven Port compliance, ask:
 
-- [ ] Interface defined in Domain layer
-- [ ] Use domain terminology (ubiquitous language)
-- [ ] Return `Result<T>` for operations that can fail
-- [ ] Accept and return domain types (not primitives)
-- [ ] Used by Domain Services (not directly by Aggregates)
-- [ ] Abstract external services containing business logic
-- [ ] No implementation details in interface
-- [ ] Enable testing with fake adapters
-- [ ] One port per external service concern
-- [ ] Distinguish from repositories (persistence vs integration)
+### Design Principles
+- [ ] Is there interface segregation (specific interfaces for specific clients, avoiding monolithic ports)?
+- [ ] Is there intent-based naming (business language, not technical jargon)?
+- [ ] Is the port technology agnostic (no HTTP, SQL, REST in method names)?
+
+### Interface Design
+- [ ] Is the port interface defined in the Domain layer?
+- [ ] Does the port use domain terminology (ubiquitous language)?
+- [ ] Does the port interface allow for swapping implementations?
+- [ ] Do port operations return `Result<T>` for operations that can fail?
+- [ ] Does the port accept and return domain types (not primitives)?
+- [ ] Are there no implementation details in the port interface?
+- [ ] Are there no framework-specific types in port method signatures?
+- [ ] Do technical exceptions get caught in the adapter and re-thrown as business exceptions?
+
+### Patterns
+- [ ] Is the Gateway Pattern used for external service communication (REST, gRPC, SOAP)?
+- [ ] Is the Output Port Pattern used for event publishing (write-only, observer pattern)?
+- [ ] Is the Repository Pattern distinguished from ports (for persistence)?
+
+### Data Exchange
+- [ ] Are framework-specific objects (Hibernate proxies, HTTP responses) never passed through ports?
+
+### Usage
+- [ ] Is the port used by Domain Services (not directly by Aggregates)?
+- [ ] Does the port abstract external services containing business logic?
+- [ ] Is there one port per external service concern?
 
 ## Port vs Adapter
 

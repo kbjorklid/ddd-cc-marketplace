@@ -156,11 +156,13 @@ flowchart TB
 
 ## Summary Checklist
 
-When designing Factories, ensure:
+When reviewing a DOMAIN.md for Factory compliance, ask:
 
-- [ ] Creation logic separated from representation
-- [ ] Factory methods return `Result<T>` for validation failures
-- [ ] Private constructor on entity (public factory)
-- [ ] Invalid objects cannot be created
-- [ ] Error messages are descriptive
-- [ ] Creation strategies are clear and focused
+- [ ] Is the creation logic separated from representation?
+- [ ] Do factory methods return `Result<T>` for validation failures?
+- [ ] Is the Factory used for complex assemblies?
+- [ ] Are Factory Methods placed on Aggregate Roots (when creating internal parts or closely related Aggregates)?
+- [ ] Is the constructor on the entity private (public factory)?
+- [ ] Can invalid objects never be created?
+- [ ] Are error messages in validation failures descriptive?
+- [ ] Are creation strategies clear and focused?

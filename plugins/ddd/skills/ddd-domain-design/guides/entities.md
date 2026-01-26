@@ -553,18 +553,18 @@ classDiagram
 
 ## Summary Checklist
 
-When designing Entities, ensure:
+When reviewing a DOMAIN.md for Entity compliance, ask:
 
-- [ ] Clear identity strategy (surrogate, UUID, natural)
-- [ ] Identity wrapped in Value Object for type safety
-- [ ] Private setters (state changes via behavior methods)
-- [ ] Business logic encapsulated in methods, not services
-- [ ] Clear lifecycle management (creation, transitions, archival)
-- [ ] Create methods return `Result<T>` with validation
-- [ ] Behavior methods return `Result` for operations that can fail
-- [ ] State machine modeled for valid transitions
-- [ ] Rich behavior, not anemic data holder
-- [ ] Distinction between Aggregate Root and internal entity
-- [ ] Cross-aggregate references by ID only
-- [ ] Invariants enforced before state changes
-- [ ] Descriptive error messages in Result.Error returns
+- [ ] Is there a clear identity strategy (surrogate, UUID, natural)?
+- [ ] Is the identity wrapped in a Value Object for type safety?
+- [ ] Are all setters private (state changes via behavior methods)?
+- [ ] Is business logic encapsulated in entity methods, not services?
+- [ ] Is there clear lifecycle management (creation, transitions, archival)?
+- [ ] Do Create methods return `Result<T>` with validation?
+- [ ] Do behavior methods return `Result` for operations that can fail?
+- [ ] Is there a state machine modeled for valid transitions?
+- [ ] Is the entity rich with behavior, not an anemic data holder?
+- [ ] Is the distinction between Aggregate Root and internal entity clear?
+- [ ] Are all cross-aggregate references by ID only?
+- [ ] Are invariants enforced before state changes?
+- [ ] Are error messages in Result.Error returns descriptive?

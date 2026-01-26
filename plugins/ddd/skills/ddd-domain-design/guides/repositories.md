@@ -404,18 +404,19 @@ classDiagram
 
 ## Summary Checklist
 
-When designing repository interfaces in the domain layer:
+When reviewing a DOMAIN.md for Repository Interface compliance, ask:
 
-- [ ] Interface defined in Domain layer
-- [ ] One interface per Aggregate Root
-- [ ] Collection-like semantics (Add, Update, Remove, GetById, Find)
-- [ ] Return `Result<T>` for operations that can fail
-- [ ] GetById returns `Result<T>` for not-found cases
-- [ ] Use Specification pattern for complex queries
-- [ ] No database-specific methods
-- [ ] No repository for internal entities
-- [ ] Enable testing with fake implementations
-- [ ] Keep interface stable (implementation details hidden)
+- [ ] Is the repository interface defined in the Domain layer?
+- [ ] Is there one repository interface per Aggregate Root?
+- [ ] Does the repository have collection-like semantics (Add, Update, Remove, GetById, Find)?
+- [ ] Are the methods named using the Ubiquitous Language?
+- [ ] Do repository operations return `Result<T>` for operations that can fail?
+- [ ] Does GetById return `Result<T>` for not-found cases?
+- [ ] Is the Specification pattern used for complex queries?
+- [ ] Are there no database-specific methods in the interface?
+- [ ] Is there no repository for internal entities?
+- [ ] Does the interface enable testing with fake implementations?
+- [ ] Is the interface kept stable (implementation details hidden)?
 
 ## Repository Interface vs Implementation
 

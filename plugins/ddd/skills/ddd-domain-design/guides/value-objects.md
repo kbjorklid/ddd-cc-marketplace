@@ -357,14 +357,14 @@ classDiagram
 
 ## Summary Checklist
 
-When creating Value Objects, ensure:
+When reviewing a DOMAIN.md for Value Object compliance, ask:
 
-- [ ] Immutability (read-only fields, no setters)
-- [ ] Structural equality (override equals/hashCode)
-- [ ] No identity (no ID field)
-- [ ] Always valid (Create method returns Result<T>)
-- [ ] Validation rules in Create method
-- [ ] Self-contained behavior
-- [ ] Clear domain meaning
-- [ ] Primitive obsession prevention
-- [ ] Error messages are descriptive
+- [ ] Is the Value Object immutable (read-only fields, no setters)?
+- [ ] Does the Value Object have structural equality (equals/hashCode overridden)?
+- [ ] Does the Value Object have no identity (no ID field)?
+- [ ] Is the Create method returning `Result<T>` for validation failures?
+- [ ] Are all validation rules in the Create method?
+- [ ] Does the Value Object have self-contained behavior?
+- [ ] Is the domain meaning of the Value Object clear?
+- [ ] Does the Value Object prevent primitive obsession?
+- [ ] Are error messages in the Result.Error returns descriptive?

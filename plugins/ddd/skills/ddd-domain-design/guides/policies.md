@@ -823,17 +823,19 @@ flowchart TB
 
 ## Summary Checklist
 
-When designing Policies, ensure:
+When reviewing a DOMAIN.md for Policy compliance, ask:
 
-- [ ] Encapsulates varying business rule or algorithm
-- [ ] Named using ubiquitous language (domain terminology)
-- [ ] Multiple variations exist or are planned
-- [ ] Logic is complex enough to warrant extraction
-- [ ] Clarifies domain object's responsibility (doesn't create anemic model)
-- [ ] Stateless or immutable value object
-- [ ] Injected as parameter or dependency
-- [ ] Returns decisions/calculations, doesn't modify state
-- [ ] Testable in isolation
-- [ ] Documented in DOMAIN.md with business rule explanation
-- [ ] Distinguished from Specifications (algorithms vs predicates)
-- [ ] Distinguished from Domain Services (encapsulated rule vs stateless operation)
+- [ ] Does the Policy encapsulate a varying business rule or algorithm?
+- [ ] Does the Policy decouple the rule from the Entity?
+- [ ] Does the Policy trigger commands based on events (if using EventStorming)?
+- [ ] Is the Policy named using ubiquitous language (domain terminology)?
+- [ ] Do multiple variations of the Policy exist or are planned?
+- [ ] Is the logic complex enough to warrant extraction into a Policy?
+- [ ] Does the Policy clarify the domain object's responsibility (doesn't create anemic model)?
+- [ ] Is the Policy a stateless service or immutable value object?
+- [ ] Is the Policy injected as a parameter or dependency?
+- [ ] Does the Policy return decisions/calculations, not modify state?
+- [ ] Is the Policy testable in isolation?
+- [ ] Is the Policy documented in DOMAIN.md with business rule explanation?
+- [ ] Is the Policy distinguished from Specifications (algorithms vs predicates)?
+- [ ] Is the Policy distinguished from Domain Services (encapsulated rule vs stateless operation)?

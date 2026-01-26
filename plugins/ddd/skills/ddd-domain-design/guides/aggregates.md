@@ -615,19 +615,20 @@ flowchart TB
 
 ## Summary Checklist
 
-When designing Aggregates, ensure:
+When reviewing a DOMAIN.md for Aggregate compliance, ask:
 
-- [ ] Small aggregates (Root + few entities/VOs)
-- [ ] Clear consistency boundaries
-- [ ] Reference other aggregates by ID only
-- [ ] One repository per Aggregate Root
-- [ ] Invariants documented and enforced
-- [ ] Behavior methods (not public setters)
-- [ ] Behavior methods return `Result` for operations that can fail
-- [ ] Create methods return `Result<T>` with validation
-- [ ] Repository methods return `Result` for operations that can fail
-- [ ] Domain events for significant changes
-- [ ] Concurrency control strategy defined
-- [ ] Eventual consistency for cross-aggregate operations
-- [ ] Version field for optimistic locking
-- [ ] Descriptive error messages in Result.Error returns
+- [ ] Is the aggregate small (Root + few entities/VOs)?
+- [ ] Are consistency boundaries clearly defined?
+- [ ] Is access restricted to the Aggregate Root?
+- [ ] Do references to other aggregates use IDs only?
+- [ ] Is there one repository interface per Aggregate Root?
+- [ ] Are all invariants documented and enforced?
+- [ ] Are there behavior methods instead of public setters?
+- [ ] Do behavior methods return `Result` for operations that can fail?
+- [ ] Do Create methods return `Result<T>` with validation?
+- [ ] Do repository methods return `Result` for operations that can fail?
+- [ ] Are domain events used for significant changes?
+- [ ] Is there a concurrency control strategy defined?
+- [ ] Is eventual consistency used for cross-aggregate operations?
+- [ ] Is there a version field for optimistic locking?
+- [ ] Are error messages in Result.Error returns descriptive?

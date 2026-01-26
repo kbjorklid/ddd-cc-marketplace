@@ -388,10 +388,11 @@ flowchart LR
 
 ## Summary Checklist
 
-When designing Domain Events, ensure:
+When reviewing a DOMAIN.md for Domain Event compliance, ask:
 
-- [ ] Past-tense naming (OrderPlaced, not PlaceOrder)
-- [ ] Immutable (events are facts)
-- [ ] Minimal data (only what consumers need)
-- [ ] Standard metadata (EventId, AggregateId, OccurredAt)
-- [ ] Clear correlation (events reference aggregate IDs)
+- [ ] Are Domain Events named in past tense (OrderPlaced, not PlaceOrder)?
+- [ ] Are Domain Events immutable (events are facts)?
+- [ ] Are Domain Events defined in the Domain Layer?
+- [ ] Do Domain Events contain minimal data (only what consumers need)?
+- [ ] Do Domain Events have standard metadata (EventId, AggregateId, OccurredAt)?
+- [ ] Do Domain Events have clear correlation (events reference aggregate IDs)?

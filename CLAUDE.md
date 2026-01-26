@@ -10,7 +10,7 @@ This is a **DDD Specification Marketplace** - a Claude Code plugin for creating 
 
 ## Plugin Architecture
 
-This is a **Claude Code Plugin** that extends Claude's capabilities with domain-driven design expertise. The plugin is registered as a local marketplace and contains a single skill.
+This is a **Claude Code Plugin** that extends Claude's capabilities with domain-driven design expertise. The plugin is registered as a local marketplace and contains skills, slash commands, and agents.
 
 ### Directory Structure
 
@@ -21,7 +21,15 @@ ddd-spec/
 ├── plugins/
 │   └── ddd/                      # DDD Plugin
 │       ├── .claude-plugin/
-│       │   └── plugin.json       # Plugin manifest
+│       │   └── plugin.json       # Plugin manifest (v0.2.0)
+│       ├── commands/             # Slash commands
+│       │   ├── ddd-design.md     # Create domain design from specs
+│       │   ├── ddd-update.md     # Update existing domain design
+│       │   ├── ddd-extract.md    # Extract domain from code
+│       │   └── ddd-sync.md       # Sync docs with code changes
+│       ├── agents/               # Autonomous agents
+│       │   ├── codebase-analyzer.md        # Analyze code for domain concepts
+│       │   └── code-change-analyzer.md    # Analyze changes for sync
 │       └── skills/
 │           └── ddd-domain-design/
 │               ├── SKILL.md       # Main skill definition
@@ -62,6 +70,187 @@ ddd-spec/
 - Future considerations section
 
 **Key principle:** Always invoke this skill via the Skill tool when users request domain design work - do not attempt to create domain documents without it.
+
+## Slash Commands
+
+The plugin provides user-facing slash commands for common domain design workflows. All commands invoke the `ddd-domain-design` skill to ensure DDD best practices.
+
+### `/ddd-design` - Create Domain Design
+
+Create a new DOMAIN.md document from user specifications.
+
+**Usage:**
+- `/ddd-design` - Interactive mode
+- `/ddd-design [domain-name]` - With domain name
+- `/ddd-design [domain-name] [context]` - With additional context
+
+**What it does:**
+- Guides user through domain design with clarifying questions
+- Invokes `ddd-domain-design` skill for DDD expertise
+- Creates structured DOMAIN.md with all required sections
+- Ensures proper Mermaid diagram syntax with DDD stereotypes
+
+**When to use:** Starting new domain models, creating bounded context designs
+
+---
+
+### `/ddd-update` - Update Existing Design
+
+Update an existing DOMAIN.md with new concepts or changes.
+
+**Usage:**
+- `/ddd-update` - Interactive mode
+- `/ddd-update [section] [change-description]` - Specific update
+
+**What it does:**
+- Reads existing DOMAIN.md
+- Asks what sections need updating
+- Invokes `ddd-domain-design` skill
+- Applies targeted updates while preserving structure
+- Shows diff summary of changes
+
+**When to use:** Adding aggregates/entities/VOs, updating invariants, modifying diagrams
+
+---
+
+### `/ddd-extract` - Extract from Code
+
+Analyze existing code to create DOMAIN.md for refactoring guidance.
+
+**Usage:**
+- `/ddd-extract` - Analyze current directory
+- `/ddd-extract [directory]` - Analyze specific directory
+- `/ddd-extract [directory] [domain-name]` - With domain name
+
+**What it does:**
+- Launches `codebase-analyzer` agent for deep code analysis
+- Extracts aggregates, entities, value objects from code
+- Identifies invariants and ubiquitous language
+- Detects DDD anti-patterns
+- Creates DOMAIN.md with refactoring recommendations
+
+**When to use:** Analyzing non-DDD codebases, creating refactoring roadmaps
+
+**Output includes:**
+- Extracted Domain (what was found)
+- DDD Refactoring (recommendations)
+- Proposed Design (restructured model)
+- Migration Path (steps to refactor)
+
+---
+
+### `/ddd-sync` - Sync with Code Changes
+
+Update DOMAIN.md to reflect recent code modifications.
+
+**Usage:**
+- `/ddd-sync` - Sync uncommitted changes
+- `/ddd-sync [commit-range]` - Sync specific commits
+
+**What it does:**
+- Analyzes git diff for code changes
+- Launches `code-change-analyzer` agent
+- Detects new/modified/deleted domain concepts
+- Updates DOMAIN.md based on changes
+- Shows synchronization summary
+
+**When to use:** Keeping docs synchronized with code, after implementing changes
+
+## Agents
+
+The plugin includes autonomous agents that perform complex analysis tasks. Agents are invoked by commands but can also trigger proactively based on context.
+
+### `codebase-analyzer` Agent
+
+Analyzes existing codebases to extract domain concepts for DDD modeling.
+
+**When it runs:**
+- Invoked by `/ddd-extract` command
+- Proactively when analyzing code structure
+- On explicit request for domain analysis
+
+**What it does:**
+- Identifies aggregates, entities, value objects
+- Extracts invariants from validation logic
+- Builds ubiquitous language glossary
+- Detects DDD anti-patterns (anemic models, primitive obsession, etc.)
+- Provides refactoring recommendations
+
+**Key capabilities:**
+- Cross-language support (TypeScript, C#, Java, Python)
+- Heuristic pattern recognition
+- Actionable refactoring recommendations
+
+**Tools:** Read, Grep, Glob, Bash
+
+---
+
+### `code-change-analyzer` Agent
+
+Analyzes code changes to determine DOMAIN.md updates needed.
+
+**When it runs:**
+- Invoked by `/ddd-sync` command
+- After git commits modifying domain code
+- On explicit request to sync documentation
+
+**What it does:**
+- Detects new domain concepts
+- Identifies modified concepts
+- Finds removed concepts
+- Analyzes invariant changes
+- Recommends specific updates with confidence levels
+
+**Key capabilities:**
+- Git diff parsing
+- Change impact analysis
+- Confidence levels (High/Medium/Low)
+- Structured update instructions
+
+**Tools:** Read, Grep, Glob, Bash
+
+## Integration Patterns
+
+### Command → Skill Flow
+
+Commands invoke the `ddd-domain-design` skill via the Skill tool:
+1. Command receives user request
+2. Command invokes skill with context
+3. Skill provides DDD expertise and guidance
+4. Command applies skill output to create/update DOMAIN.md
+
+### Command → Agent → Skill Flow
+
+Commands involving code analysis use agents:
+1. Command receives user request
+2. Command launches agent via Task tool
+3. Agent performs analysis (codebase or changes)
+4. Agent returns structured findings
+5. Command invokes skill with agent findings
+6. Skill transforms findings into DDD patterns
+7. Command creates/updates DOMAIN.md
+
+### Example Workflow: `/ddd-extract`
+
+```
+User: /ddd-extract src/
+  ↓
+Command validates directory exists
+  ↓
+Command launches codebase-analyzer agent (Task tool)
+  ↓
+Agent scans code, extracts domain concepts
+  ↓
+Agent returns: aggregates, entities, VOs, invariants, violations
+  ↓
+Command invokes ddd-domain-design skill (Skill tool)
+  ↓
+Skill transforms concepts into proper DDD patterns
+  ↓
+Command presents findings to user for confirmation
+  ↓
+DOMAIN.md written with refactoring recommendations
+```
 
 ## Document Structure (DOMAIN.md)
 

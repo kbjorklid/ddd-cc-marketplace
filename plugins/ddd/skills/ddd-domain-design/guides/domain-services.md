@@ -587,16 +587,16 @@ flowchart TB
 
 ## Summary Checklist
 
-When designing Domain Services, ensure:
+When reviewing a DOMAIN.md for Domain Service compliance, ask:
 
-- [ ] Logic genuinely doesn't fit in single Entity/Value Object
-- [ ] Named using ubiquitous language (verb + noun + service)
-- [ ] Stateless operations (no instance state)
-- [ ] Returns `Result<T>` for operations that can fail
-- [ ] Uses ports for external dependencies
-- [ ] Distinguished from Application Services (business logic vs. orchestration)
-- [ ] Accepts domain types (aggregates, value objects), not DTOs
-- [ ] Keeps entities rich (doesn't become procedural script)
-- [ ] Single responsibility (not a "god service")
-- [ ] Documented in domain design with clear purpose
-- [ ] Testable in isolation (mock ports and repositories)
+- [ ] Does the Domain Service logic genuinely not fit in a single Entity/Value Object?
+- [ ] Is the Domain Service named using ubiquitous language (verb + noun + service)?
+- [ ] Are all Domain Service operations stateless (no instance state)?
+- [ ] Do Domain Service operations return `Result<T>` for failures?
+- [ ] Does the Domain Service use ports for external dependencies?
+- [ ] Is the Domain Service distinguished from Application Services (business logic vs. orchestration)?
+- [ ] Does the Domain Service accept domain types (aggregates, value objects), not DTOs?
+- [ ] Does the Domain Service keep entities rich (not a procedural script)?
+- [ ] Does the Domain Service have a single responsibility (not a "god service")?
+- [ ] Is the Domain Service documented in the domain design with a clear purpose?
+- [ ] Is the Domain Service testable in isolation (mock ports and repositories)?

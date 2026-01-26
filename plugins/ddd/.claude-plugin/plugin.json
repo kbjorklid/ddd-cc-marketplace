@@ -1,10 +1,12 @@
 {
   "name": "ddd",
-  "version": "0.1.0",
-  "description": "Domain-Driven Design plugin",
+  "version": "1.0.0",
+  "description": "Domain-Driven Design plugin - Create and maintain DOMAIN.md documents with tactical DDD patterns",
   "author": {
     "name": "Kalle Bjökrklid"
   },
-  "keywords": ["domain-driven-design", "ddd", "domain-modeling", "tactical-ddd"],
-  "skills": "./skills"
+  "keywords": ["domain-driven-design", "ddd", "domain-modeling", "tactical-ddd", "slash-commands", "agents"],
+  "skills": "./skills",
+  "commands": "./commands",
+  "agents": "./agents"
 }

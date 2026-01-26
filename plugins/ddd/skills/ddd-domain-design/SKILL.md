@@ -1,7 +1,7 @@
 ---
 name: ddd-domain-design
 description: This skill should be used when the user asks to "create a domain.md", "design a domain model", "create a DOMAIN.md document", "design tactical DDD model", or mentions tactical domain-driven design patterns like aggregates, entities, value objects, invariants, or ubiquitous language. This skill ensures proper DDD document structure and adherence to tactical DDD best practices.
-version: 0.1.0
+version: 1.0.0
 ---
 
 # Domain Design (Tactical DDD)

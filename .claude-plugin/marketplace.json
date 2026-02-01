@@ -1,21 +1,21 @@
 {
   "name": "ddd-domain-design",
   "owner": {
-    "name": "DDD Specification"
+      "name": "Kalle Björklid"
   },
   "metadata": {
     "description": "Domain-Driven Design marketplace for specifying microservices and modules with DDD tactical patterns",
-    "version": "1.0.0",
-    "pluginRoot": "./plugins"
+    "version": "1.1.0"
   },
   "plugins": [
     {
       "name": "ddd-domain-design",
-      "source": "./ddd",
+      "source": "./plugins/ddd",
       "description": "Create domain design documents using Domain-Driven Design practices. Produces domain.md with aggregates, value objects, ubiquitous language, and invariants.",
-      "version": "0.1.0",
+      "category": "Software Development",
+      "version": "1.1.0",
       "author": {
-        "name": "DDD Specification"
+        "name": "Kalle Björklid"
       },
       "keywords": ["domain-driven-design", "ddd", "microservices", "domain-modeling", "aggregates", "value-objects"]
     }

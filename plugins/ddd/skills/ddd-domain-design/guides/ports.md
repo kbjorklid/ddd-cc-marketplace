@@ -376,6 +376,86 @@ flowchart TB
 
 **Rule of thumb:** Do not pass framework-specific objects (Hibernate proxies, active records, HTTP responses) into the domain.
 
+**Recommendation:** Prefer 'Pragmatic DDD' over 'Strict decoupling' for most use cases.
+
+### The Anti-Corruption Layer (ACL)
+
+When integrating with external systems that have different models (especially legacy systems or third-party APIs), ports act as an **Anti-Corruption Layer**:
+
+```mermaid
+flowchart LR
+    subgraph Domain["Your Domain Model"]
+        D1[Clean domain concepts]
+        D2[Ubiquitous language]
+    end
+
+    subgraph Port["Port Interface"]
+        P1[Defines model in your terms]
+    end
+
+    subgraph Adapter["Adapter"]
+        A1[Translates to external model]
+        A2[Protects from volatile changes]
+    end
+
+    subgraph External["External System"]
+        E1[Messy legacy model]
+        E2[Volatile API changes]
+    end
+
+    D1 --> P1
+    P1 --> A1
+    A1 --> E1
+    E2 -.->|blocked by ACL| D2
+
+    style Domain fill:#e1f5e1
+    style Port fill:#e1f5e1
+    style Adapter fill:#fff4e1
+    style External fill:#f5e1e1
+```
+
+**Key benefits:**
+- **Translation:** The Port defines the model in *your* terms
+- **Protection:** Prevents "messy" legacy models or volatile upstream changes from leaking into your clean core
+- **Isolation:** External model changes are confined to the adapter
+
+## Testing Advantages
+
+Properly designed driven ports are the key to testability in hexagonal architecture.
+
+```mermaid
+flowchart TB
+    subgraph Production["Production Environment"]
+        Domain[Domain Logic]
+        Port[Port Interface]
+        RealAdapter[Real Adapter]
+        External[External System]
+
+        Domain --> Port
+        Port --> RealAdapter
+        RealAdapter --> External
+    end
+
+    subgraph Test["Test Environment"]
+        Domain2[Domain Logic]
+        Port2[Port Interface]
+        TestDouble[Test Double<br/>Mock/Stub/Fake]
+
+        Domain2 --> Port2
+        Port2 --> TestDouble
+    end
+
+    style Production fill:#fff4e1
+    style Test fill:#e1f5e1
+    style TestDouble fill:#c8e6c9
+```
+
+**Testing benefits:**
+- **Test Doubles:** Because the application depends on an interface (Port), you can easily swap the heavy infrastructure implementation for a lightweight **Mock**, **Stub**, or **Fake** during testing
+- **Speed:** This allows you to test business logic without spinning up a database or connecting to a network, significantly increasing test speed
+- **Isolation:** Test domain logic in isolation from external service availability or network issues
+- **Determinism:** Test doubles provide predictable responses, avoiding flaky tests due to external service behavior
+
 ## Domain Services Using Ports
 
 ### Pattern: Domain Service Coordinates Port Calls

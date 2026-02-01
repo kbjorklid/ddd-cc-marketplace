@@ -1,33 +1,34 @@
 ---
 name: code-change-analyzer
-description: Use this agent when synchronizing DOMAIN.md with code changes or when code has been modified and domain documentation needs updating. Examples:
+description: |
+   Use this agent when synchronizing DOMAIN.md with code changes or when code has been modified and domain documentation needs updating. Examples:
 
-<example>
-Context: Code changes were made and DOMAIN.md needs to reflect them
-user: "Update the domain design to match the new code"
-assistant: "I'll use the code-change-analyzer agent to detect what changed and update DOMAIN.md."
-<commentary>
-Agent reads existing DOMAIN.md for context, then analyzes git diffs to identify impact on domain model structure.
-</commentary>
-</example>
+   <example>
+   Context: Code changes were made and DOMAIN.md needs to reflect them
+   user: "Update the domain design to match the new code"
+   assistant: "I'll use the code-change-analyzer agent to detect what changed and update DOMAIN.md."
+   <commentary>
+   Agent reads existing DOMAIN.md for context, then analyzes git diffs to identify impact on domain model structure.
+   </commentary>
+   </example>
 
-<example>
-Context: User made changes to domain model
-user: "I added a Payment aggregate, update the docs"
-assistant: "Let me analyze the code changes and synchronize DOMAIN.md."
-<commentary>
-Agent parses code changes to detect new domain concepts and their relationships, understanding current domain context first.
-</commentary>
-</example>
+   <example>
+   Context: User made changes to domain model
+   user: "I added a Payment aggregate, update the docs"
+   assistant: "Let me analyze the code changes and synchronize DOMAIN.md."
+   <commentary>
+   Agent parses code changes to detect new domain concepts and their relationships, understanding current domain context first.
+   </commentary>
+   </example>
 
-<example>
-Context: Git history shows domain model changes
-user: "The last few commits modified the order aggregates"
-assistant: "I'll use the code-change-analyzer agent to identify the impact of those commits."
-<commentary>
-Agent analyzes commit range to determine what domain concepts changed, using existing docs as baseline.
-</commentary>
-</example>
+   <example>
+   Context: Git history shows domain model changes
+   user: "The last few commits modified the order aggregates"
+   assistant: "I'll use the code-change-analyzer agent to identify the impact of those commits."
+   <commentary>
+   Agent analyzes commit range to determine what domain concepts changed, using existing docs as baseline.
+   </commentary>
+   </example>
 
 model: sonnet
 color: yellow

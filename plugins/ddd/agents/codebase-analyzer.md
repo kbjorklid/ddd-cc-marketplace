@@ -1,35 +1,36 @@
 ---
 name: codebase-analyzer
-description: Use this agent when analyzing existing legacy codebases to extract domain concepts for DDD refactoring. Examples:
+description: |
+ Use this agent when analyzing existing legacy codebases to extract domain concepts for DDD refactoring. Examples:
 
-<example>
-Context: User wants to create domain design from tangled legacy code
-user: "Create a DOMAIN.md from this codebase"
-assistant: "I'll use the codebase-analyzer agent to extract domain concepts from the legacy code."
-<commentary>
-The agent performs deep analysis of tangled, non-DDD code to identify hidden domain concepts and recommend refactoring.
-</commentary>
-</example>
+   <example>
+   Context: User wants to create domain design from tangled legacy code
+   user: "Create a DOMAIN.md from this codebase"
+   assistant: "I'll use the codebase-analyzer agent to extract domain concepts from the legacy code."
+   <commentary>
+   The agent performs deep analysis of tangled, non-DDD code to identify hidden domain concepts and recommend refactoring.
+   </commentary>
+   </example>
 
-<example>
-Context: User mentions existing legacy code that needs DDD refactoring
-user: "This code is a mess, doesn't follow DDD patterns, can you help?"
-assistant: "Let me analyze the codebase to identify domain concepts and recommend DDD refactoring."
-<commentary>
-Agent analyzes tangled code structure, detects implicit DDD patterns, and provides concrete refactoring recommendations.
-</commentary>
-</example>
+   <example>
+   Context: User mentions existing legacy code that needs DDD refactoring
+   user: "This code is a mess, doesn't follow DDD patterns, can you help?"
+   assistant: "Let me analyze the codebase to identify domain concepts and recommend DDD refactoring."
+   <commentary>
+   Agent analyzes tangled code structure, detects implicit DDD patterns, and provides concrete refactoring recommendations.
+   </commentary>
+   </example>
 
-<example>
-Context: User asks about domain structure in legacy code
-user: "What domain concepts exist in this legacy project?"
-assistant: "I'll use the codebase-analyzer agent to identify potential DDD constructs in the tangled codebase."
-<commentary>
-Agent discovers hidden domain concepts through pattern recognition, heuristic analysis, and anti-pattern detection.
-</commentary>
-</example>
+   <example>
+   Context: User asks about domain structure in legacy code
+   user: "What domain concepts exist in this legacy project?"
+   assistant: "I'll use the codebase-analyzer agent to identify potential DDD constructs in the tangled codebase."
+   <commentary>
+   Agent discovers hidden domain concepts through pattern recognition, heuristic analysis, and anti-pattern detection.
+   </commentary>
+   </example>
 
-model: inherit
+model: sonnet
 color: cyan
 tools: ["Read", "Grep", "Glob", "Bash"]
 ---

@@ -26,8 +26,9 @@ Apply targeted updates to DOMAIN.md:
 - Add new concepts in appropriate sections (aggregates, entities, VOs, services, events, repositories, ports, factories, specifications, policies)
 - Update Mermaid diagrams if types/relationships change
 - Maintain invariant ID numbering
-- Update ubiquitous language with new terms
+- Update ubiquitous language with new terms in **business terms only** (no DDD technical jargon)
 - Ensure proper DDD stereotypes in diagrams
+- Split diagrams if they become too large (>20 classes)
 
 After updating, show a diff summary highlighting:
 - What domain concepts were added/modified (by pattern type)

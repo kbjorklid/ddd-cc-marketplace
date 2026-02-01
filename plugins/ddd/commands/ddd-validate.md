@@ -258,6 +258,43 @@ Check for overall document completeness:
 - [ ] Are relationships between types clear?
 - [ ] Is cross-aggregate referencing by ID only in diagrams?
 
+### Ubiquitous Language Quality Checks
+
+- [ ] Are all definitions in **business terms only** (no DDD technical jargon)?
+- [ ] Are definitions free of technical terms like "aggregate root", "entity", "value object", "repository", "domain service"?
+- [ ] Are definitions free of programming terms like "class", "instance", "reference", "ID", "field"?
+- [ ] Do definitions describe **what the concept is** in business terms, not how it's implemented?
+- [ ] Would a business stakeholder (product manager, domain expert) understand the definitions?
+- [ ] Are definitions concise (1-2 sentences)?
+- [ ] Do definitions use language from actual business conversations?
+
+**Common Anti-Patterns to Detect:**
+- "Signing Workflow: The **aggregate root** that orchestrates..." - Uses DDD term "aggregate root"
+- "Signer: An **entity** that represents a participant..." - Uses DDD term "entity"
+- "Expiration Time: A **value object** that stores the deadline..." - Uses DDD term "value object"
+- "Customer ID: The **identifier field** for customers..." - Uses programming term "field"
+
+**Good Examples:**
+- "Signing Workflow: A document signing process that coordinates multiple signers and tracks their signatures"
+- "Signer: A person who needs to sign a document, identified by their email address"
+- "Expiration Time: The deadline after which the signing workflow is automatically cancelled"
+
+### Diagram Organization Checks
+
+- [ ] Are diagrams split when a single diagram exceeds 20 classes?
+- [ ] Is there an **Aggregate Overview** diagram showing all aggregates and their relationships?
+- [ ] Are there **per-aggregate detail diagrams** showing internal structure?
+- [ ] Is there a **Domain Events** diagram when 3+ events exist?
+- [ ] Is there a **Domain Services and Ports** diagram when 2+ services exist?
+- [ ] Are diagrams clearly labeled with descriptive section headings?
+- [ ] Do diagrams avoid mixing concerns (e.g., not showing events, services, and aggregates all together)?
+
+**Common Anti-Patterns to Detect:**
+- Single massive diagram with 30+ classes that should be split
+- All value objects shown in aggregate overview (clutters the high-level view)
+- Domain events mixed with aggregates in same diagram
+- No clear section headings between multiple diagrams
+
 ## Present Results
 
 Present validation results to user in the following format:

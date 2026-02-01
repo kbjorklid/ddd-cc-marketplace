@@ -37,8 +37,8 @@ Invoke the ddd-domain-design skill to update DOMAIN.md:
 - Add new patterns found in code (all 10 types)
 - Update relationships between concepts
 - Add/remove invariants based on validation changes
-- Update ubiquitous language with new/refactored terms
-- Update Mermaid diagrams to reflect changes
+- Update ubiquitous language with new/refactored terms in **business terms only** (no DDD technical jargon)
+- Update Mermaid diagrams to reflect changes, splitting into multiple sections if growing large
 
 Apply updates to DOMAIN.md and show synchronization summary:
 - What domain concepts changed (by pattern type)

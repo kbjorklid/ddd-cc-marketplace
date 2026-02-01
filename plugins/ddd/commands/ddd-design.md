@@ -30,16 +30,18 @@ At this point, when you have an initial idea of what you're doing, interview the
 The skill will ensure:
 - Proper DOMAIN.md structure (all required sections)
 - Correct Mermaid diagram syntax with DDD stereotypes (<<Aggregate Root>>, <<Entity>>, <<Value Object>>, etc.)
-- Comprehensive ubiquitous language glossary
+- Comprehensive ubiquitous language glossary in **business terms only** (no DDD technical jargon)
 - Documented invariants with IDs
 - Design explanations for non-obvious choices
 - Coverage of all relevant tactical DDD patterns
+- Multiple diagrams when domain is large enough (aggregate overview, per-aggregate details, events, services)
 
 After skill completes, save the output as DOMAIN.md in the current directory.
 
 Quality checks before saving:
 - All sections from template present
-- Mermaid diagram uses proper DDD stereotypes for all pattern types
+- Mermaid diagrams use proper DDD stereotypes for all pattern types
 - Invariants documented with IDs
-- Ubiquitous language comprehensive
+- Ubiquitous language comprehensive and in **business terms only** (no "aggregate root", "entity", "value object" in definitions)
+- Diagrams split when appropriate (multiple sections: Aggregate Overview, per-aggregate details, Domain Events, Domain Services and Ports)
 - Design explanations cover non-obvious decisions

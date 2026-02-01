@@ -13,12 +13,63 @@ This skill guides the creation and modification of `DOMAIN.md` documents using t
 Every `DOMAIN.md` must follow this structure:
 
 1. **Title and Introduction** - Domain name and purpose (1-4 sentences)
-2. **Ubiquitous Language** - Glossary of domain terms and definitions
-3. **Class Diagrams** - Mermaid class diagrams showing the model
-4. **Types** - Descriptions of non-obvious types (aggregates, entities, value objects)
-5. **Design Explanations** - Non-obvious design choices and cross-context references
+2. **Ubiquitous Language** - Glossary of domain terms in **business language only** (no DDD technical terms)
+3. **Class Diagrams** - Multiple Mermaid class diagrams organized by concern
+4. **Types** - Descriptions of types with non-obvious business logic or design decisions (omit simple value objects like Email, PersonName, Address, Money, Quantity, ID types)
+5. **Design Details** - Supplemental information NOT captured by class diagrams (state machines, transition tables, complex business rules, cross-context integration)
 6. **Invariants** - Business rules that must always hold true
 7. **Future Considerations** - Ideas not yet incorporated
+
+## Ubiquitous Language Guidelines
+
+**Critical Principle:** The Ubiquitous Language table must be readable and understandable by **business stakeholders** (domain experts, product managers, business analysts). This table defines the shared language between technical and business teams.
+
+### What to Include
+
+- Domain concepts from the business domain
+- Terms that have specific meaning in this context
+- Phrases used in conversations with domain experts
+
+### Writing Style
+
+**DO:**
+- Define what the concept **is** in business terms
+- Use language from actual business conversations
+- Focus on the business problem it solves
+- Keep definitions concise (1-2 sentences)
+
+**DON'T:**
+- Use DDD technical terms (aggregate root, entity, value object, repository, domain service, domain event)
+- Describe technical implementation details
+- Use programming jargon (class, instance, reference, ID)
+- Mix technical and business concerns
+
+### Examples
+
+**Good (Business-focused):**
+```
+| Term | Definition |
+|------|------------|
+| Signing Workflow | A document signing process that coordinates multiple signers, tracks their signatures, and manages the signing sequence |
+| Signer | A person who needs to sign a document, identified by their email address and name |
+| Expiration Time | The deadline after which the signing workflow is automatically cancelled |
+```
+
+**Bad (Technical terms mixed in):**
+```
+| Term | Definition |
+|------|------------|
+| Signing Workflow | The aggregate root that orchestrates the signing process |  ❌ Uses "aggregate root"
+| Signer | An entity that represents a participant in the workflow |  ❌ Uses "entity"
+| Expiration Time | A value object that stores the deadline timestamp |  ❌ Uses "value object"
+```
+
+### When to Split Tables
+
+If the domain has many subdomains or bounded contexts, consider grouping terms into multiple tables:
+- **Core Domain Terms** - The primary business concepts
+- **Supporting Concepts** - Secondary terms and configurations
+- **Integration Terms** - Concepts related to external systems
 
 ## Document Template
 
@@ -31,32 +82,79 @@ Every `DOMAIN.md` must follow this structure:
 
 | Term | Definition |
 |------|------------|
-| [Term 1] | [Clear, concise definition of the domain term] |
-| [Term 2] | [Clear, concise definition of the domain term] |
+| [Term 1] | [Clear, concise definition in business terms only - no DDD technical jargon] |
+| [Term 2] | [Clear, concise definition in business terms only - no DDD technical jargon] |
 
 ## Class Diagrams
 
-[Mermaid class diagram]
+### Aggregate Overview
+
+[High-level diagram showing all aggregates and their relationships]
+
+### [Aggregate Name] Aggregate
+
+[Detailed diagram of aggregate structure with internal entities and value objects]
+
+## Domain Events
+
+[Diagram showing all domain events and their relationships to aggregates]
+
+## Domain Services and Ports
+
+[Diagram showing domain services and their dependencies on ports/external services]
 
 ## Types
 
+**Include only types with non-obvious business logic or design decisions.**
+
+**OMIT from Types section:**
+- Simple value objects (Email, PersonName, Address, Money, Quantity, ID types, DateRange, etc.)
+- Types where the class diagram is self-explanatory
+- Types with only basic CRUD operations
+
+**Focus on:**
+- Aggregates with complex lifecycle management
+- Entities with non-obvious business behavior
+- Domain services that coordinate across aggregates
+- Types with complex invariant enforcement
+
+**Writing style:**
+- NO DDD technical terms (avoid "aggregate root", "entity", "value object", "repository")
+- Describe business purpose and behavior, not DDD pattern classification
+- Focus on what problems the type solves, not its pattern role
+
 ### [AggregateRoot]
 
-[Purpose and responsibilities]
+[Business-focused description: What lifecycle does it manage? What business problems does it solve? What key decisions does it encapsulate?]
 
-### [SomeEntity]
+### [ComplexEntity]
 
-[Purpose and responsibilities]
+[Business-focused description: What business behavior does it encapsulate beyond simple data storage?]
 
-### [SomeValueObject]
+### [DomainService]
 
-[Purpose and responsibilities]
+[Business-focused description: What domain operation does it coordinate? Why does this logic span multiple aggregates?]
 
-## Design Explanations
+## Design Details
 
-### [Some design explanation header]
+**This section contains information NOT visible in class diagrams.**
 
-[Design explanation - a few sentences. Keep it succinct.]
+**Include:**
+- State diagrams for state machines
+- State transition tables with triggers and guard conditions
+- Sequence diagrams for complex interactions
+- Cross-context integration points
+- Complex business rules not obvious from diagrams
+- Data flow diagrams for multi-step processes
+
+**DO NOT include:**
+- DDD concept explanations (no "this demonstrates proper aggregate boundary respect")
+- Explanations of simple/obvious design patterns
+- Teaching-style content about DDD principles
+
+### [Design Aspect]
+
+[Supplemental diagram or table explaining complex behavior, state transitions, or integration points]
 
 ## Invariants
 
@@ -79,6 +177,94 @@ Every `DOMAIN.md` must follow this structure:
 ```
 
 ## Mermaid Class Diagram Guidelines
+
+### Diagram Organization Strategy
+
+**Split diagrams when:**
+- A single diagram exceeds 20 classes
+- Multiple aggregates exist in the domain
+- The domain has more than 5 domain events
+- Value objects clutter the main aggregate structures
+
+**Recommended diagram structure:**
+
+1. **Aggregate Overview** (always create)
+   - Shows all aggregate roots and their relationships
+   - Includes cross-aggregate associations (by ID)
+   - Uses simple notation, minimal internal details
+
+2. **Per-Agregate Details** (create one per aggregate)
+   - Shows the aggregate root with its entities and value objects
+   - Includes all behavioral methods
+   - Shows composition relationships within the aggregate
+   - Names: "[Aggregate Name] Aggregate"
+
+3. **Domain Events** (create if 3+ events)
+   - Shows all domain events and their fields
+   - Indicates which aggregates raise each event
+   - Shows event relationships if any exist
+
+4. **Domain Services and Ports** (create if 2+ services)
+   - Shows domain services and their operations
+   - Includes ports/interfaces for external dependencies
+   - Shows service dependencies on aggregates or other services
+
+**Example structure:**
+```markdown
+## Class Diagrams
+
+### Aggregate Overview
+
+```mermaid
+classDiagram
+    class SigningWorkflow {
+        <<Aggregate Root>>
+    }
+    class Document {
+        <<Aggregate Root>>
+    }
+    SigningWorkflow --> Document : references
+```
+
+### SigningWorkflow Aggregate
+
+```mermaid
+classDiagram
+    class SigningWorkflow {
+        <<Aggregate Root>>
+        +Id: SigningWorkflowId
+        +State: WorkflowState
+        +Start() Result
+    }
+    class Signer {
+        <<Entity>>
+    }
+    SigningWorkflow "1" *-- "*" Signer
+```
+
+## Domain Events
+
+```mermaid
+classDiagram
+    class SigningWorkflowCreated {
+        <<Domain Event>>
+    }
+    class SignatureAdded {
+        <<Domain Event>>
+    }
+```
+
+## Domain Services and Ports
+
+```mermaid
+classDiagram
+    class SigningOrderService {
+        <<Domain Service>>
+    }
+    class IEmailGateway {
+        <<Port>>
+    }
+```
 
 ### Diagram Requirements
 
@@ -164,6 +350,16 @@ classDiagram
     Order "1" *-- "*" OrderItem : contains
     Order "1" *-- "1" CustomerId : placed by
 ```
+
+**Ubiquitous Language for this example:**
+| Term | Definition |
+|------|------------|
+| Order | A customer's request to purchase products |
+| Order Item | A single product line in an order with quantity and price |
+| Customer | The person placing the order |
+| Order Status | The current state of an order (Pending, Confirmed, Shipped, etc.) |
+
+❌ **Avoid:** "Order: The aggregate root that manages items" (uses DDD technical term)
 
 ## Tactical DDD Pattern Guides
 
@@ -477,8 +673,10 @@ Anemic domain models occur when entities are mere data containers with public se
 **For the domain.md document:**
 - Succinct, technical prose (assume DDD expertise)
 - No code snippets (abstraction level above code)
-- No basic DDD concept explanations
+- No basic DDD concept explanations (audience knows DDD)
+- No teaching-style content (avoid "this demonstrates proper X pattern")
 - Focus on design rationale and trade-offs
+- Target audience: coding agents and professional DDD developers
 
 **For class diagrams:**
 - Use verb phrases for methods (e.g., `confirm()`, not `confirmOrder()`)

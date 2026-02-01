@@ -34,6 +34,8 @@ Invoke the ddd-domain-design skill with the extracted concepts to:
 - Transform findings into proper DDD patterns (all 10 types)
 - Create structured DOMAIN.md following template
 - Document refactoring recommendations clearly
+- Ensure ubiquitous language is in **business terms only** (no DDD technical jargon)
+- Split diagrams into multiple sections when appropriate (aggregate overview, per-aggregate details, events, services)
 
 Present findings to user:
 - Show what hidden domain concepts were discovered

@@ -14,9 +14,29 @@ This domain handles the lifecycle of customer orders from creation through fulfi
 
 ## Class Diagrams
 
+### Aggregate Overview
+
 ```mermaid
 classDiagram
-    %% Order Aggregate
+    class Order {
+        <<Aggregate Root>>
+        +Id: OrderId
+        +CustomerId: CustomerId
+        +Status: OrderStatus
+    }
+
+    class Customer {
+        <<Aggregate Root>>
+        +Id: CustomerId
+    }
+
+    Order "1" --> "1" Customer : references by ID
+```
+
+### Order Aggregate
+
+```mermaid
+classDiagram
     class Order {
         <<Aggregate Root>>
         +Id: OrderId
@@ -89,11 +109,9 @@ classDiagram
     }
 
     Order "1" *-- "*" OrderItem : contains
-    Order "1" *-- "1" OrderId : identified by
     Order "1" *-- "1" CustomerId : placed by
     Order "1" *-- "1" OrderStatus : has state
     Order "1" *-- "1" Address : ships to
-    OrderItem "1" *-- "1" OrderItemId : identified by
     OrderItem "1" *-- "1" ProductId : references
     OrderItem "1" *-- "1" Quantity : specifies
     OrderItem "1" *-- "1" Money : priced at
@@ -104,41 +122,43 @@ classDiagram
 
 ### Order
 
-Root of the Order aggregate. Manages the complete lifecycle of an order from draft through delivery. Handles business rules for state transitions, ensures order integrity, and publishes domain events for state changes.
+Manages order lifecycle from draft creation through delivery confirmation. Enforces business rules for state transitions, validates order completeness before processing, and coordinates item modifications within the order consistency boundary.
 
 ### OrderItem
 
-Entity within the Order aggregate representing a single line item. Tracks product identity, quantity, and locked-in price at order time. Cannot exist independently of its parent Order.
+Represents a single line item with locked-in price at order time. Captures product identity, quantity, and unit price as an immutable historical record. Cannot exist independently of its parent order.
 
-### Address
+## Design Details
 
-Value object encapsulating shipping location information. Immutable and validated upon creation. Ensures consistent address format across the system.
+### Order Status State Machine
 
-### Money
+```mermaid
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> Confirmed: confirm()
+    Confirmed --> Paid: markAsPaid()
+    Paid --> Shipped: ship(trackingNumber)
+    Shipped --> Delivered: confirmDelivery()
+    Draft --> Cancelled: cancel(reason)
+    Confirmed --> Cancelled: cancel(reason)
+    Paid --> Cancelled: refundAndCancel()
+    Cancelled --> [*]
+    Delivered --> [*]
+```
 
-Value object representing monetary amounts with currency. Encapsulates arithmetic operations and rounding rules specific to financial calculations.
+### State Transition Triggers
 
-### Quantity
+| From | To | Trigger | Guard Condition |
+|------|----|---------|-----------------|
+| Draft | Confirmed | Order confirmed | Has items, has shipping address |
+| Confirmed | Paid | Payment received | Payment valid |
+| Paid | Shipped | Items shipped | Tracking number assigned |
+| Shipped | Delivered | Delivery confirmed | Customer/signature confirmation |
+| Draft/Confirmed/Paid | Cancelled | Cancel requested | Refund processed if paid |
 
-Value object wrapping integer quantities with validation rules (must be positive, within reasonable bounds). Prevents primitive obsession for numeric quantities.
+### Price Locking Strategy
 
-## Design Explanations
-
-### Customer Reference by ID
-
-The Order aggregate references Customer by CustomerId (value object), not by direct object reference. This maintains aggregate boundary integrity, prevents mega-aggregate formation, and enables distribution across services if needed.
-
-### Price Locking in OrderItem
-
-UnitPrice is captured within OrderItem at order creation time. This preserves the price the customer agreed to, independent of subsequent product price changes. The price becomes an immutable historical fact.
-
-### Shipping as Value Object
-
-ShippingAddress is modeled as a value object within Order rather than an entity. Orders don't track address lifecycle—only current shipping destination. If address changes, a new Address instance replaces the old one.
-
-### Small Aggregate Design
-
-The Order aggregate contains only its root and child OrderItems. References to Product, Customer, and other concepts are by ID only. This keeps the aggregate small for performance and supports clear transaction boundaries.
+UnitPrice is captured within OrderItem at order creation time, preserving the price the customer agreed to independent of subsequent product price changes.
 
 ## Invariants
 

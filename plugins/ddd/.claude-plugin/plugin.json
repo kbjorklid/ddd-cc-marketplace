@@ -1,5 +1,5 @@
 {
-  "name": "ddd",
+  "name": "ddd-domain-design",
   "version": "1.0.0",
   "description": "Domain-Driven Design plugin - Create and maintain DOMAIN.md documents with tactical DDD patterns",
   "author": {

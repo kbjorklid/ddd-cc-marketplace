@@ -19,5 +19,10 @@
         "path": "./"
       }
     }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "powershell -NoProfile -Command \"$branch = git branch --show-current 2>$null; if (!$branch) { $branch = 'no-git' }; $dir = Split-Path (Get-Location) -Leaf; Write-Output \\\"$branch | $dir\\\"\"",
+    "padding": 1
   }
 }

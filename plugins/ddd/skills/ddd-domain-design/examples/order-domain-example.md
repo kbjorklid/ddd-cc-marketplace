@@ -1,6 +1,6 @@
 # Order Management Domain Design
 
-This domain handles the lifecycle of customer orders from creation through fulfillment. It manages order state, items, pricing, and order status transitions.
+This domain manages customer orders from creation through delivery. It tracks order state, items, pricing, and status transitions.
 
 ## Ubiquitous Language
 
@@ -122,11 +122,11 @@ classDiagram
 
 ### Order
 
-Manages order lifecycle from draft creation through delivery confirmation. Enforces business rules for state transitions, validates order completeness before processing, and coordinates item modifications within the order consistency boundary.
+The order aggregate root tracks each order from draft through delivery. It enforces state transition rules, validates completeness before processing, and coordinates item modifications within the consistency boundary.
 
 ### OrderItem
 
-Represents a single line item with locked-in price at order time. Captures product identity, quantity, and unit price as an immutable historical record. Cannot exist independently of its parent order.
+An order item represents one line in an order with the price locked at creation time. It records the product identity, quantity, and unit price as an immutable snapshot. An order item cannot exist without its parent order.
 
 ## Design Details
 
@@ -156,9 +156,9 @@ stateDiagram-v2
 | Shipped | Delivered | Delivery confirmed | Customer/signature confirmation |
 | Draft/Confirmed/Paid | Cancelled | Cancel requested | Refund processed if paid |
 
-### Price Locking Strategy
+### Price Locking
 
-UnitPrice is captured within OrderItem at order creation time, preserving the price the customer agreed to independent of subsequent product price changes.
+The order item captures the unit price at creation. This preserves the price the customer agreed to, regardless of later product price changes.
 
 ## Invariants
 
@@ -182,7 +182,7 @@ UnitPrice is captured within OrderItem at order creation time, preserving the pr
 
 ## Future Considerations
 
-- Add OrderDiscount value object to handle promotional discounts
-- Consider splitting into Order and Shipment aggregates for complex fulfillment workflows
-- Add version field for optimistic concurrency control
-- Consider event sourcing for order history audit trail
+- Add an OrderDiscount value object for promotional discounts
+- Split the Order aggregate into Order and Shipment aggregates for complex fulfillment workflows
+- Add a version field for optimistic concurrency control
+- Use event sourcing for an order history audit trail

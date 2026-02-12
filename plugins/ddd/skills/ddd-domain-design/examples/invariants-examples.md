@@ -1,6 +1,6 @@
 # Invariant Examples
 
-This document provides examples of how to document business invariants in domain designs.
+This document shows how to document business invariants in domain designs.
 
 ## Aggregate-Level Invariants
 
@@ -8,18 +8,18 @@ This document provides examples of how to document business invariants in domain
 
 | ID | Invariant | Notes |
 |----|-----------|-------|
-| ORDER-1 | Order must have at least one item to be confirmed | Prevents processing of empty orders |
+| ORDER-1 | Order must have at least one item to be confirmed | Prevents empty order processing |
 | ORDER-2 | Order total must equal sum of item quantities × unit prices | Ensures pricing consistency |
-| ORDER-3 | Order cannot transition to Paid without a Confirmed status | Enforces state machine constraints |
-| ORDER-4 | Confirmed orders cannot be modified | Locks order after confirmation |
-| ORDER-5 | Draft orders expire after 7 days of inactivity | Business rule for order validity |
+| ORDER-3 | Order cannot transition to Paid without a Confirmed status | Enforces the state machine |
+| ORDER-4 | Confirmed orders cannot be modified | Locks the order after confirmation |
+| ORDER-5 | Draft orders expire after 7 days of inactivity | Business rule |
 
 ### Account Aggregate Invariants
 
 | ID | Invariant | Notes |
 |----|-----------|-------|
-| ACCT-1 | Account balance cannot go below minimum balance | Overdraft protection rule |
-| ACCT-2 | Daily withdrawal limit cannot exceed $10,000 | Fraud prevention measure |
+| ACCT-1 | Account balance cannot go below minimum balance | Overdraft protection |
+| ACCT-2 | Daily withdrawal limit cannot exceed $10,000 | Fraud prevention |
 | ACCT-3 | Account must have at least one owner | Ensures accountability |
 | ACCT-4 | Closed accounts cannot perform transactions | Final state enforcement |
 
@@ -29,7 +29,7 @@ This document provides examples of how to document business invariants in domain
 |----|-----------|-------|
 | INV-1 | Invoice total must equal sum of line items | Mathematical consistency |
 | INV-2 | Invoice number must be unique within organization | Regulatory requirement |
-| INV-3 | Invoice due date must be after invoice date | Temporal logic constraint |
+| INV-3 | Invoice due date must be after invoice date | Temporal constraint |
 | INV-4 | Paid amount cannot exceed invoice total | Prevents overpayment |
 
 ## Entity-Level Invariants
@@ -47,7 +47,7 @@ This document provides examples of how to document business invariants in domain
 | ID | Invariant | Notes |
 |----|-----------|-------|
 | SHIP-1 | Shipment must have at least one shipping item | Empty shipments not allowed |
-| SHIP-2 | Shipping address must be valid | Validated by Address value object |
+| SHIP-2 | Shipping address must be valid | Address value object validates this |
 | SHIP-3 | Tracking number format must match carrier pattern | Format validation |
 
 ## Cross-Aggregate Invariants (Eventual Consistency)
@@ -56,15 +56,15 @@ This document provides examples of how to document business invariants in domain
 
 | ID | Invariant | Notes |
 |----|-----------|-------|
-| CUST-ORD-1 | Customer cannot be deleted if they have active orders | Enforced via eventual consistency |
-| CUST-ORD-2 | Customer email changes must propagate to order notifications | Handled by domain events |
+| CUST-ORD-1 | Customer cannot be deleted if they have active orders | Enforced by eventual consistency |
+| CUST-ORD-2 | Customer email changes must propagate to order notifications | Domain events handle this |
 
 ### Inventory-Order Consistency
 
 | ID | Invariant | Notes |
 |----|-----------|-------|
-| INV-ORD-1 | Order items cannot exceed available inventory | Checked via domain service, eventual consistency |
-| INV-ORD-2 | Reserved stock must be released when order cancelled | Handled by compensating actions |
+| INV-ORD-1 | Order items cannot exceed available inventory | Domain service checks this; eventual consistency |
+| INV-ORD-2 | Reserved stock must be released when order cancelled | Compensating actions handle this |
 
 ## State Machine Invariants
 
@@ -82,7 +82,7 @@ Valid transitions only:
 | ORDER-STATE-1 | Cannot transition from Cancelled to any other state | Terminal state |
 | ORDER-STATE-2 | Cannot ship unpaid orders | Process requirement |
 | ORDER-STATE-3 | Cannot cancel shipped orders | Operational constraint |
-| ORDER-STATE-4 | Cannot modify items after confirmation | Immutable after state change |
+| ORDER-STATE-4 | Cannot modify items after confirmation | State change makes items immutable |
 
 ## Temporal Invariants
 
@@ -102,7 +102,7 @@ Valid transitions only:
 |----|-----------|-------|
 | DISC-1 | Percentage discount cannot exceed 100% | Mathematical constraint |
 | DISC-2 | Cannot stack more than 3 promotional discounts | Business policy |
-| DISC-3 | Discount codes cannot be applied to sale items | Exclusion rule |
+| DISC-3 | Discount codes cannot apply to sale items | Exclusion rule |
 
 ### Payment Processing
 
@@ -116,15 +116,15 @@ Valid transitions only:
 
 ### Best Practices
 
-1. **Be Specific**: Clearly state what must be true
-2. **Explain Why**: Use notes column for business rationale
+1. **Be Specific**: State clearly what must be true
+2. **Explain Why**: Use the notes column for business rationale
 3. **Group by Aggregate**: Organize invariants by what enforces them
-4. **Use Structured IDs**: Prefix with aggregate/entity abbreviation
-5. **Distinguish Levels**: Separate aggregate vs entity vs cross-aggregate rules
+4. **Use Structured IDs**: Prefix with the aggregate/entity abbreviation
+5. **Distinguish Levels**: Separate aggregate, entity, and cross-aggregate rules
 
 ### ID Format
 
-Use `{ABBREVIATION}-{number}` format:
+Use the `{ABBREVIATION}-{number}` format:
 - `ORDER-1`, `ORDER-2` for Order aggregate
 - `ITEM-1`, `ITEM-2` for OrderItem entity
 - `ACCT-1`, `ACCT-2` for Account aggregate
@@ -133,10 +133,10 @@ Use `{ABBREVIATION}-{number}` format:
 ### Notes Column Usage
 
 **Good notes:**
-- "Prevents processing of empty orders"
-- "Enforced by Money value object validation"
-- "Business policy from finance department"
+- "Prevents empty order processing"
+- "Money value object validates this"
+- "Finance department policy"
 
-**Unnecessary notes:**
-- "Self-evident" (if truly obvious, omit notes)
-- "Required" (why it's required is more valuable)
+**Omit these notes:**
+- "Self-evident" (if obvious, omit the notes column)
+- "Required" (explain why instead)
